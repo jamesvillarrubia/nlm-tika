@@ -255,6 +255,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             xhtml.endElement("p");
         } catch (SAXException e) {
             throw new IOException("Unable to end a paragraph", e);
+        }
     }
  
     private static String sanitizeText(TextPosition textPosition) {
