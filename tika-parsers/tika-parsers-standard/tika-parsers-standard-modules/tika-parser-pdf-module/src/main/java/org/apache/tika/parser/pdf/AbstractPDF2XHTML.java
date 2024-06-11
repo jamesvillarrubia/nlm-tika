@@ -12,8 +12,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ * limitations under the License. 
+ * 
+ * ------------------------------------------------------------
+ * Modifications to source code by Ambika Sukla, Nlmatics Corp.
+ * ------------------------------------------------------------
+ * Changed source code to include font and co-ordinates and some color/graphics information of each extracted text element.
  */
+
 package org.apache.tika.parser.pdf;
 
 import static org.apache.tika.parser.pdf.PDFParserConfig.OCR_STRATEGY.AUTO;
@@ -243,15 +249,12 @@ class AbstractPDF2XHTML extends PDFTextStripper {
     @Override
     protected void startPage(PDPage page) throws IOException {
         try {
-            xhtml.startElement("br");
-            xhtml.endElement("br");
             AttributesImpl attrs = new AttributesImpl();
             attrs.addAttribute("", "class", "class", "CDATA", "page");
             PDRectangle bBox = page.getBBox();
             String pageDims = "height:" + bBox.getHeight() + "px; width:" + bBox.getWidth() + "px;";
-            attrs.addAttribute("", "style", "style", "CDATA", pageDims + " position: relative;border: 3px solid #7FFFD4;padding: 10em;");
+            attrs.addAttribute("", "style", "style", "CDATA", pageDims + " position: relative;border: 1px solid red;");
             xhtml.startElement("div", attrs);
-
             // xhtml.startElement("div", "class", "page");
         } catch (SAXException e) {
             throw new IOException("Unable to start a page", e);

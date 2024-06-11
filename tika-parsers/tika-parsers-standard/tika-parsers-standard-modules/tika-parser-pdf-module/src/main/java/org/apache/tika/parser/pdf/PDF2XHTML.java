@@ -13,12 +13,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
+ * ------------------------------------------------------------
+ * Modifications to source code by Ambika Sukla, Nlmatics Corp.
+ * ------------------------------------------------------------
+ * Changed source code to include font and co-ordinates information of each extracted text element.
+ * 
  */
 package org.apache.tika.parser.pdf;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.lang.StringBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,8 +47,12 @@ import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.state.PDGraphicsState;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
@@ -49,6 +60,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.pdf.image.ImageGraphicsEngine;
+import org.apache.tika.parser.pdf.GraphicsStreamProcessor;
 import org.apache.tika.renderer.PageRangeRequest;
 import org.apache.tika.renderer.RenderRequest;
 import org.apache.tika.renderer.RenderResult;
@@ -77,6 +89,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
      */
     private Map<COSStream, Integer> processedInlineImages = new HashMap<>();
     private AtomicInteger inlineImageCounter = new AtomicInteger(0);
+    private Map<TextPosition, List<String>> textColors = new HashMap<>();
+
 
     PDF2XHTML(PDDocument document, ContentHandler handler, ParseContext context, Metadata metadata,
               PDFParserConfig config) throws IOException {
@@ -139,6 +153,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     public void processPage(PDPage page) throws IOException {
         try {
             super.processPage(page);
+
         } catch (IOException e) {
             handleCatchableIOE(e);
             endPage(page);
@@ -155,6 +170,13 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             } catch (IOException e) {
                 handleCatchableIOE(e);
             }
+            AttributesImpl svgAttrs = new AttributesImpl();
+            svgAttrs.addAttribute("", "width", "width", "CDATA", String.valueOf(page.getBBox().getWidth()));
+            svgAttrs.addAttribute("", "height", "height", "CDATA", String.valueOf(page.getBBox().getHeight()));
+            xhtml.startElement("svg", svgAttrs);
+            GraphicsStreamProcessor lc = new GraphicsStreamProcessor(page, 0.0f, new StringBuffer(), xhtml);
+            lc.processPage(page);
+            xhtml.endElement("svg");
             super.endPage(page);
         } catch (SAXException e) {
             throw new IOException("Unable to end a page", e);
