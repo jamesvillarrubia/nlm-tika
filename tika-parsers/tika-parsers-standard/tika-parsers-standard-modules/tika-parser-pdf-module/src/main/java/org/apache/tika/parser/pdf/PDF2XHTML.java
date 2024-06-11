@@ -484,6 +484,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 ";word-fonts:" + fontsStr;
             result.add(Arrays.asList(spanText, val));
         }
+        return result;
     }
 
     @Override
