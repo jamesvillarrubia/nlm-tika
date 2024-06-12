@@ -91,7 +91,6 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     private AtomicInteger inlineImageCounter = new AtomicInteger(0);
     private Map<TextPosition, List<String>> textColors = new HashMap<>();
 
-
     PDF2XHTML(PDDocument document, ContentHandler handler, ParseContext context, Metadata metadata,
               PDFParserConfig config) throws IOException {
         super(document, handler, context, metadata, config);
@@ -153,7 +152,6 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     public void processPage(PDPage page) throws IOException {
         try {
             super.processPage(page);
-
         } catch (IOException e) {
             handleCatchableIOE(e);
             endPage(page);
