@@ -486,11 +486,21 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     }
 
     @Override
-    protected void writeString(String text) throws IOException {
+    protected void writeString(String text,  List<TextPosition> textPositions) throws IOException {
         try {
-            xhtml.characters(text);
+            List<List<String>> result = this.writeStringInner(text, textPositions);
+            for (List<String> row: result) {
+                String spanText = row.get(0);
+                String styleText = row.get(1);
+                xhtml.startElement("p", "style", styleText);
+                xhtml.characters(spanText);
+                xhtml.endElement("p");
+            }
+
+
         } catch (SAXException e) {
-            throw new IOException("Unable to write a string: " + text, e);
+            throw new IOException(
+                    "Unable to write a string: " + text, e);
         }
     }
 
