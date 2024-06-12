@@ -239,21 +239,11 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     @Override
     protected void writeParagraphStart() throws IOException {
         super.writeParagraphStart();
-        try {
-            xhtml.startElement("p");
-        } catch (SAXException e) {
-            throw new IOException("Unable to start a paragraph", e);
-        }
     }
 
     @Override
     protected void writeParagraphEnd() throws IOException {
         super.writeParagraphEnd();
-        try {
-            xhtml.endElement("p");
-        } catch (SAXException e) {
-            throw new IOException("Unable to end a paragraph", e);
-        }
     }
  
     private static String sanitizeText(TextPosition textPosition) {
